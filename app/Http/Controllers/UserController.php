@@ -62,4 +62,24 @@ class UserController extends Controller
 
         return UserResource::make($user);
     }
+
+    /**
+     * Partially update the specified resource in storage.
+     */
+    public function patch(UpdateUserRequest $request, User $user): UserResource
+    {
+        $user->update($request->validated());
+
+        return UserResource::make($user);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return response()->json(['message' => 'El usuario ha sido eliminado correctamente.'], 200);
+    }
 }

@@ -20,11 +20,15 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Si es PUT, todos los campos son requeridos
+        // Si es PATCH, los campos son opcionales (sometimes)
+        $requiredRule = $this->isMethod('put') ? 'required' : 'sometimes';
+
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'lastname' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->user)],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($this->user)],
+            'name' => [$requiredRule, 'string', 'max:255'],
+            'lastname' => [$requiredRule, 'string', 'max:255'],
+            'username' => [$requiredRule, 'string', 'max:255', Rule::unique('users')->ignore($this->user)],
+            'email' => [$requiredRule, 'email', Rule::unique('users')->ignore($this->user)],
         ];
     }
 }
