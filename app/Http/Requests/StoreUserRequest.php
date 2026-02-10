@@ -26,6 +26,10 @@ class StoreUserRequest extends FormRequest
             'lastname' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'email', 'unique:users,email'],
+            'hiring_date' => ['nullable', 'date'],
+            'dui' => ['required', 'string', 'regex:/^\d{8}-\d$/', 'unique:users,dui'],
+            'phone_number' => ['nullable', 'string', 'regex:/^[0-9\-\+\s\(\)]+$/'],
+            'birth_date' => ['required', 'date', 'before:today'],
         ];
     }
 }

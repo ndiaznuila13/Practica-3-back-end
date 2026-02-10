@@ -29,6 +29,10 @@ class UpdateUserRequest extends FormRequest
             'lastname' => [$requiredRule, 'string', 'max:255'],
             'username' => [$requiredRule, 'string', 'max:255', Rule::unique('users')->ignore($this->user)],
             'email' => [$requiredRule, 'email', Rule::unique('users')->ignore($this->user)],
+            'hiring_date' => ['sometimes', 'date'],
+            'dui' => [$requiredRule, 'string', 'regex:/^\d{8}-\d$/', Rule::unique('users')->ignore($this->user)],
+            'phone_number' => ['nullable', 'string', 'regex:/^[0-9\-\+\s\(\)]+$/'],
+            'birth_date' => [$requiredRule, 'date', 'before:today'],
         ];
     }
 }

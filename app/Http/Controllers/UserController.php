@@ -20,6 +20,10 @@ class UserController extends Controller
     {
         $users = User::query()
             ->when(
+                value: $request->input('is_trashed') === 'true',
+                callback: fn (Builder $query): Builder => $query->onlyTrashed()
+            )
+            ->when(
                 value: $request->has(key: 'username'),
                 callback: fn (Builder $query): Builder => $query->where(column: 'username', operator: 'like', value: '%' . $request->input('username') . '%')
             )
@@ -39,6 +43,11 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $data['password'] = Str::random(8); // Le colocamos una contraseña por defecto
+        
+        // Si no se envía hiring_date, asignar la fecha actual
+        if (!isset($data['hiring_date'])) {
+            $data['hiring_date'] = now()->toDateString();
+        }
 
         $user = User::create($data);
         
@@ -81,5 +90,21 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'El usuario ha sido eliminado correctamente.'], 200);
+    }
+
+    /**
+     * Restore a soft deleted user.
+     */
+    public function restore(int $id)
+    {
+        $user = User::onlyTrashed()->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado entre los eliminados.'], 404);
+        }
+
+        $user->restore();
+
+        return response()->json(['message' => 'Usuario restaurado correctamente.'], 200);
     }
 }
